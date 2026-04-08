@@ -171,34 +171,39 @@ export default function Homes() {
 
         <div className="w-full md:w-1/2 h-[500px] relative mt-16 md:mt-0 flex items-center justify-center">
           <div className="relative w-full max-w-[400px] h-[500px] flex items-center justify-center">
-            <AnimatePresence mode="popLayout">
-              {teamImages.map((img, index) => {
-                const isCenter = index === currentIndex;
-                const isLeft = index === (currentIndex - 1 + teamImages.length) % teamImages.length;
-                const isRight = index === (currentIndex + 1) % teamImages.length;
+            {/* นำ AnimatePresence ออกได้เลยเพราะเราจะไม่ Unmount Component แล้ว */}
+            {teamImages.map((img, index) => {
+              // คำนวณระยะห่างจากภาพตรงกลาง (Offset) เพื่อให้การวนลูปซ้ายขวาสมูท
+              let offset = index - currentIndex;
+              const halfLength = Math.floor(teamImages.length / 2);
 
-                if (!isCenter && !isLeft && !isRight) return null;
+              if (offset < -halfLength) offset += teamImages.length;
+              if (offset > halfLength) offset -= teamImages.length;
 
-                return (
-                  <motion.div
-                    key={img}
-                    initial={{ opacity: 0, scale: 0.8, x: isRight ? 100 : -100 }}
-                    animate={{
-                      opacity: isCenter ? 1 : 0.4,
-                      scale: isCenter ? 1 : 0.8,
-                      x: isCenter ? 0 : isLeft ? -120 : 120,
-                      zIndex: isCenter ? 30 : 10,
-                      rotateY: isCenter ? 0 : isLeft ? 15 : -15,
-                    }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute w-[280px] md:w-[320px] aspect-[3/4] rounded-[2rem] overflow-hidden shadow-2xl "
-                  >
-                    <img src={img} className="w-full h-full object-cover" alt="Team" />
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+              const isCenter = offset === 0;
+              const isLeft = offset === -1;
+              const isRight = offset === 1;
+              const isVisible = Math.abs(offset) <= 1; // เช็คว่าอยู่ในระยะที่ต้องมองเห็นหรือไม่
+
+              return (
+                <motion.div
+                  key={img}
+                  initial={false} // ปิด initial เพื่อไม่ให้กระตุกตอนโหลดครั้งแรก
+                  animate={{
+                    opacity: isCenter ? 1 : isVisible ? 0.4 : 0,
+                    scale: isCenter ? 1 : isVisible ? 0.8 : 0.6,
+                    x: isCenter ? 0 : isLeft ? -120 : isRight ? 120 : offset < 0 ? -150 : 150,
+                    zIndex: isCenter ? 30 : isVisible ? 10 : 0,
+                    rotateY: isCenter ? 0 : isLeft ? 15 : isRight ? -15 : 0,
+                  }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute w-[280px] md:w-[320px] aspect-[3/4] rounded-[2rem] overflow-hidden shadow-2xl"
+                  style={{ pointerEvents: isCenter ? "auto" : "none" }} // ป้องกันการกดโดนภาพที่อยู่ด้านหลัง
+                >
+                  <img src={img} className="w-full h-full object-cover" alt="Team" />
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
