@@ -13,6 +13,24 @@ const WeekCarousel = ({ weekNum, images }: { weekNum: number; images: string[] }
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
 
+    // --- ส่วนที่เพิ่ม/แก้ไขใหม่ ---
+    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+        const target = e.currentTarget;
+        const currentSrc = target.src;
+
+        if (currentSrc.endsWith('.jpg')) {
+            // ถ้า .jpg พัง ลองเปลี่ยนเป็น .png
+            target.src = currentSrc.replace('.jpg', '.png');
+        } else {
+            // ถ้าไม่ใช่ .jpg (อาจจะเป็น .png ที่พังแล้ว) ให้โชว์ Placeholder เดิมของคุณ
+            const isDark = document.documentElement.classList.contains("dark");
+            target.src = `https://placehold.co/800x450/${isDark ? "1e1e20/ffffff" : "e2e8f0/000000"
+                }?text=Week+${weekNum}+-+${currentIndex + 1}`;
+        }
+    };
+
+
+
     // ระบบเลื่อนรูปอัตโนมัติ (หยุดเมื่อเอาเมาส์ชี้)
     useEffect(() => {
         if (isHovered) return;
@@ -64,10 +82,7 @@ const WeekCarousel = ({ weekNum, images }: { weekNum: number; images: string[] }
                         transition={{ duration: 0.5 }}
                         className="absolute inset-0 w-full h-full object-cover"
                         // ใส่รูป Placeholder เผื่อว่าหารูปไม่เจอ
-                        onError={(e) => {
-                            e.currentTarget.src = `https://placehold.co/800x450/${document.documentElement.classList.contains("dark") ? "1e1e20/ffffff" : "e2e8f0/000000"
-                                }?text=Week+${weekNum}+-+${currentIndex + 1}`;
-                        }}
+                        onError={handleImageError}
                     />
                 </AnimatePresence>
 

@@ -156,11 +156,25 @@ export default function ReportsPage() {
                                         alt={`Day ${day.id}`}
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         onError={(e) => {
-                                            // ถ้าหารูปไม่เจอ ให้ใช้ Placeholder ตามสีของโหมด
+                                            const target = e.currentTarget;
+                                            const currentSrc = target.src;
                                             const isDark = document.documentElement.classList.contains("dark");
-                                            e.currentTarget.src = day.isHoliday
-                                                ? `https://placehold.co/800x600/${isDark ? "1e1e20/666" : "f3f4f6/aaa"}?text=Holiday`
-                                                : `https://placehold.co/800x600/${isDark ? "1e1e20/fff" : "e2e8f0/000"}?text=Week+${currentWeekData.weekNum}+-+Day+${day.id}`;
+
+                                            // 1. ถ้าหารูป .jpg ไม่เจอ ให้ลองเปลี่ยนเป็น .png
+                                            if (currentSrc.endsWith('.jpg')) {
+                                                target.src = currentSrc.replace('.jpg', '.png');
+                                                return;
+                                            }
+
+                                            // 2. ถ้า .png ก็ยังไม่เจอ หรือไฟล์เสีย ให้ใช้ Placeholder
+                                            if (currentSrc.endsWith('.png') || !currentSrc.includes('placehold.co')) {
+                                                // แยกสี Placeholder ระหว่างวันหยุด กับ วันทำงานปกติ
+                                                if (day.isHoliday) {
+                                                    target.src = `https://placehold.co/800x600/${isDark ? "1e1e20/666666" : "f3f4f6/aaaaaa"}?text=Holiday`;
+                                                } else {
+                                                    target.src = `https://placehold.co/800x600/${isDark ? "1e1e20/ffffff" : "e2e8f0/000000"}?text=Week+${currentWeekData.weekNum}+-+Day+${day.id}`;
+                                                }
+                                            }
                                         }}
                                     />
                                     {day.isHoliday && (

@@ -115,10 +115,25 @@ export default function TimesheetPage() {
                                     src={week.image}
                                     alt={`Timesheet Week ${week.weekNum}`}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    // --- ส่วนที่แก้ไขใหม่ ---
                                     onError={(e) => {
-                                        const isDark = document.documentElement.classList.contains("dark");
-                                        e.currentTarget.src = `https://placehold.co/600x800/${isDark ? "1e1e20/ffffff" : "e2e8f0/000000"}?text=Timesheet+W${week.weekNum}`;
+                                        const target = e.currentTarget;
+                                        const currentSrc = target.src;
+
+                                        // 1. ถ้า .jpg พัง ลองเปลี่ยนเป็น .png
+                                        if (currentSrc.endsWith('.jpg')) {
+                                            target.src = currentSrc.replace('.jpg', '.png');
+                                            return; // ออกจากฟังก์ชันก่อน ไม่ต้องไปทำข้อ 2
+                                        }
+
+                                        // 2. ถ้าไม่ใช่ .jpg (อาจจะเป็น .png ที่พังแล้ว) ให้โชว์ Placeholder
+                                        if (currentSrc.endsWith('.png') || !currentSrc.includes('placehold.co')) {
+                                            const isDark = document.documentElement.classList.contains("dark");
+                                            target.src = `https://placehold.co/600x800/${isDark ? "1e1e20/ffffff" : "e2e8f0/000000"
+                                                }?text=Timesheet+W${week.weekNum}`;
+                                        }
                                     }}
+                                // ------------------------
                                 />
                                 <div className="absolute top-3 left-3 bg-white/90 dark:bg-black/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-black dark:text-white shadow-sm transition-colors duration-300">
                                     สัปดาห์ที่ {week.weekNum}
