@@ -9,6 +9,7 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // ดึงค่าจาก Environment Variable ที่เราตั้งไว้ใน Vercel/Local
+    url: process.env.DATABASE_URL, 
   },
 });
