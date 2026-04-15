@@ -3,18 +3,89 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// 1. Component หยดแสงสีชมพู
+const FallingParticle = ({ id }: { id: number }) => {
+    const randomX = Math.random() * 100;
+    const randomDelay = Math.random() * 3;
+    const randomDuration = 4 + Math.random() * 5;
+    const randomSize = 2 + Math.random() * 3;
+    const randomOpacity = 0.3 + Math.random() * 0.6;
+
+    return (
+        <motion.div
+            initial={{ y: "-10vh", x: `${randomX}vw`, opacity: 0 }}
+            animate={{
+                y: "110vh",
+                opacity: [0, randomOpacity, randomOpacity, 0],
+                x: [`${randomX}vw`, `${randomX - 2}vw`, `${randomX + 2}vw`]
+            }}
+            transition={{
+                duration: randomDuration,
+                repeat: Infinity,
+                delay: randomDelay,
+                ease: "easeInOut",
+            }}
+            className="fixed top-0 rounded-full bg-pink-300 pointer-events-none z-[9998]"
+            style={{
+                width: randomSize,
+                height: randomSize,
+                boxShadow: "0 0 10px 2px rgba(244, 114, 182, 0.6)"
+            }}
+        />
+    );
+};
+
+// 2. Component แสงระยิบระยับ
+const Sparkle = ({ id }: { id: number }) => {
+    const randomX = Math.random() * 100;
+    const randomY = Math.random() * 100;
+    const randomDelay = Math.random() * 4;
+    const randomDuration = 1.5 + Math.random() * 2.5;
+
+    return (
+        <motion.div
+            initial={{ scale: 0, opacity: 0, rotate: 0 }}
+            animate={{
+                scale: [0, 1.2, 0],
+                opacity: [0, 0.8, 0],
+                rotate: [0, 90, 180]
+            }}
+            transition={{
+                duration: randomDuration,
+                repeat: Infinity,
+                delay: randomDelay,
+                ease: "easeInOut"
+            }}
+            className="absolute bg-rose-200 pointer-events-none z-[9997]"
+            style={{
+                left: `${randomX}vw`,
+                top: `${randomY}vh`,
+                width: 4,
+                height: 4,
+                clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+                filter: "drop-shadow(0 0 6px rgba(225, 29, 72, 0.8))"
+            }}
+        />
+    );
+};
+
 export default function SplashScreen() {
     const [isLoading, setIsLoading] = useState(true);
+    // เพิ่ม State เช็ค Client Side
+    const [isMounted, setIsMounted] = useState(false);
+
+    const particles = Array.from({ length: 40 });
+    const sparkles = Array.from({ length: 20 });
 
     useEffect(() => {
-        // ล็อกหน้าจอไม่ให้เลื่อน
-        document.body.style.overflow = "hidden";
+        // บอกให้ระบบรู้ว่า Mount บน Client เรียบร้อยแล้ว
+        setIsMounted(true);
 
-        // กำหนดเวลาโชว์หน้า Loading (2.2 วินาที) แล้วให้หายไป
+        document.body.style.overflow = "hidden";
         const timer = setTimeout(() => {
             setIsLoading(false);
             document.body.style.overflow = "auto";
-        }, 2200);
+        }, 4000);
 
         return () => {
             clearTimeout(timer);
@@ -22,75 +93,93 @@ export default function SplashScreen() {
         };
     }, []);
 
+    // ป้องกัน Hydration Error: ถ้ายังไม่ Mount จะยังไม่ Render กราฟิกที่ใช้ Math.random()
+    if (!isMounted) return null;
+
     return (
         <AnimatePresence>
             {isLoading && (
                 <motion.div
                     key="splash"
-                    // แอนิเมชันตอนออก: สไลด์หน้าจอขึ้นไปเหมือนเปิดม่าน
-                    exit={{ y: "-100vh" }}
-                    transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-                    className="fixed inset-0 z-[9999] bg-[#050505] flex flex-col items-center justify-between py-24 px-6"
+                    exit={{ opacity: 0, filter: "blur(10px)" }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    // จัด Layout แบบ Flex Column และดันเนื้อหาไปอยู่ด้านล่างซ้าย
+                    className="fixed inset-0 z-[9999] bg-[#0a0206] flex flex-col justify-end p-8 md:p-16 lg:p-24 overflow-hidden font-sans"
                 >
-                    {/* ส่วนบน (ปล่อยว่างไว้เพื่อดันให้โลโก้อยู่ตรงกลางจอ) */}
-                    <div />
+                    {/* Background Glowing Orbs แบบจัดมุม */}
+                    <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-pink-600/10 rounded-full blur-[150px] pointer-events-none translate-x-1/3 -translate-y-1/3" />
+                    <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-rose-500/10 rounded-full blur-[120px] pointer-events-none -translate-x-1/4 translate-y-1/4" />
 
-                    {/* ส่วนตรงกลาง: โลโก้และข้อความ */}
-                    <div className="flex flex-col items-center">
+                    {/* Renders */}
+                    {particles.map((_, i) => <FallingParticle key={`particle-${i}`} id={i} />)}
+                    {sparkles.map((_, i) => <Sparkle key={`sparkle-${i}`} id={i} />)}
+
+                    {/* Content Section */}
+                    <div className="relative z-10 w-full max-w-6xl mx-auto flex flex-col items-start gap-4">
+
+                        {/* Internship Badge (แบบมีไฟกระพริบด้านหน้า) */}
                         <motion.div
-                            initial={{ scale: 0.8, opacity: 0, filter: "blur(10px)" }}
-                            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-                            transition={{ duration: 1, ease: "easeOut" }}
-                            className="mb-8"
+                            initial={{ opacity: 0, x: -30 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="flex items-center gap-3 mb-2"
                         >
-                            <img
-                                src="/image/it_loeitech.jpg"
-                                alt="Logo"
-                                className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-2xl shadow-[0_0_40px_rgba(255,255,255,0.05)]"
-                            />
+                            <div className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-pink-500"></span>
+                            </div>
+                            <span className="text-sm md:text-lg text-pink-200 font-medium tracking-[0.3em] uppercase">
+                                Web Developer Intern
+                            </span>
                         </motion.div>
 
-                        {/* ข้อความสไลด์ขึ้นมาทีละคำ */}
-                        <div className="overflow-hidden flex gap-2 md:gap-3">
+                        {/* Main Typography แบบ Cinematic Stack */}
+                        <div className="flex flex-col leading-[1.1]">
                             <motion.span
-                                initial={{ y: 50, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ duration: 0.7, delay: 0.2, ease: [0.33, 1, 0.68, 1] }}
-                                className="text-2xl md:text-4xl font-semibold text-white tracking-tight"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.4 }}
+                                className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter"
                             >
-                                Internship
+                                INFORMATION
                             </motion.span>
                             <motion.span
-                                initial={{ y: 50, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ duration: 0.7, delay: 0.3, ease: [0.33, 1, 0.68, 1] }}
-                                className="text-2xl md:text-4xl font-semibold text-white/40 tracking-tight"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.6 }}
+                                className="text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-600 tracking-tighter drop-shadow-[0_0_20px_rgba(244,114,182,0.2)]"
                             >
-                                Developer.
+                                TECHNOLOGY
                             </motion.span>
                         </div>
-                    </div>
 
-                    {/* ส่วนล่าง: หลอดโหลดแบบเรียบหรู (1px) */}
-                    <div className="w-full max-w-[200px] flex flex-col items-center gap-4">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.6 }}
-                            className="text-[10px] font-medium tracking-[0.2em] text-white/30 uppercase"
-                        >
-                            Loading
-                        </motion.div>
-
-                        {/* เส้นโหลด */}
-                        <div className="h-[2px] w-full bg-white/10 relative overflow-hidden rounded-full">
+                        {/* Progress Line & Loading Text แบบยาวชิดขอบ */}
+                        <div className="w-full max-w-md mt-8 flex flex-col gap-3">
                             <motion.div
-                                initial={{ x: "-100%" }}
-                                animate={{ x: "0%" }}
-                                transition={{ duration: 1.6, ease: "easeInOut", delay: 0.2 }}
-                                className="absolute inset-0 bg-white rounded-full"
-                            />
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1 }}
+                                className="flex justify-between items-end text-[11px] md:text-xs font-bold tracking-[0.2em] text-pink-300/70 uppercase"
+                            >
+                                <span>System Loading</span>
+                                <motion.span
+                                    animate={{ opacity: [1, 0.5, 1] }}
+                                    transition={{ duration: 1.5, repeat: Infinity }}
+                                >
+                                    Please Wait...
+                                </motion.span>
+                            </motion.div>
+
+                            <div className="h-[2px] w-full bg-white/5 relative overflow-hidden">
+                                <motion.div
+                                    initial={{ x: "-100%" }}
+                                    animate={{ x: "0%" }}
+                                    transition={{ duration: 3.5, ease: "circOut" }}
+                                    className="absolute inset-0 bg-gradient-to-r from-pink-600 via-pink-400 to-white shadow-[0_0_15px_rgba(244,114,182,1)]"
+                                />
+                            </div>
                         </div>
+
                     </div>
                 </motion.div>
             )}

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SplashScreen from "@/components/SplashScreen";
-import Navbar from "@/components/Navbar";
+// import Navbar from "@/components/Navbar";
 
 
 const geistSans = Geist({
@@ -20,17 +20,14 @@ export const metadata: Metadata = {
   description: "รายงานผลการฝึกประสบการณ์วิชาชีพ...",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+// app/layout.tsx
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col"><Navbar /><SplashScreen />{children}</body>
+    <html lang="en" className="...">
+      <body className="min-h-full flex flex-col">
+        <SplashScreen />
+        {children} {/* ลบ <Navbar /> ออกจากบรรทัดนี้ */}
+      </body>
     </html>
   );
 }
