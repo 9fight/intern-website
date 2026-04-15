@@ -67,7 +67,7 @@ export default function TimesheetDetailPage() {
     const itemVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-    };
+    } as const;
 
     return (
         <main className="min-h-screen font-sans bg-[#F5F5F7] text-[#1D1D1F] dark:bg-[#09090b] dark:text-gray-100 transition-colors duration-300 pb-20 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
@@ -151,8 +151,8 @@ export default function TimesheetDetailPage() {
 
                                 {/* Badge สถานะ (ด้านบนชื่อ) */}
                                 <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full w-fit mb-6 text-[11px] font-black tracking-widest uppercase ${isCompleted
-                                        ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
-                                        : 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20'
+                                    ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
+                                    : 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20'
                                     }`}>
                                     {isCompleted ? <CheckCircle2 size={16} strokeWidth={2.5} /> : <AlertCircle size={16} strokeWidth={2.5} />}
                                     {isCompleted ? 'Verified' : 'Pending Verification'}

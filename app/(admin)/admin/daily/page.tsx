@@ -144,7 +144,7 @@ export default function AdminDailyTasks() {
                     <div className="py-20 text-center text-gray-500 font-bold bg-white dark:bg-[#111113] rounded-[2rem] border border-gray-100 dark:border-white/5">ไม่พบข้อมูลที่ค้นหาในสัปดาห์นี้</div>
                 ) : (
                     <motion.div key={selectedWeek} initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.1 } } }} className="relative border-l-2 border-gray-200 dark:border-white/10 ml-4 md:ml-8 space-y-6 md:space-y-10 pb-10">
-                        {currentWeekTasks.map(task => (
+                        {currentWeekTasks.map((task: any) => (
                             <motion.div key={task.id} variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }} className="relative pl-8 md:pl-12 group">
                                 <div className="absolute -left-[11px] top-8 w-5 h-5 rounded-full bg-indigo-500 border-4 border-[#F5F5F7] dark:border-[#09090b] shadow-sm transition-transform group-hover:scale-125" />
 

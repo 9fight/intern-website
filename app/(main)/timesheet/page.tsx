@@ -95,7 +95,7 @@ export default function TimesheetPage() {
     const itemVariants = {
         hidden: { opacity: 0, y: 20 },
         show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-    };
+    } as const;
 
     return (
         <main className="min-h-screen font-sans bg-[#F5F5F7] text-[#1D1D1F] dark:bg-[#09090b] dark:text-gray-100 transition-colors duration-300 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black overflow-hidden">
@@ -192,8 +192,8 @@ export default function TimesheetPage() {
                                         <span className="truncate">{week.date_range}</span>
                                     </div>
                                     <div className={`flex items-center gap-2 text-xs md:text-sm font-black ${week.status?.includes('เรียบร้อย') || week.status?.includes('ครบถ้วน')
-                                            ? 'text-emerald-600 dark:text-emerald-400'
-                                            : 'text-amber-600 dark:text-amber-400'
+                                        ? 'text-emerald-600 dark:text-emerald-400'
+                                        : 'text-amber-600 dark:text-amber-400'
                                         }`}>
                                         {week.status?.includes('เรียบร้อย') || week.status?.includes('ครบถ้วน') ? (
                                             <CheckCircle2 size={16} strokeWidth={2.5} className="shrink-0" />

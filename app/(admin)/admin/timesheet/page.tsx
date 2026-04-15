@@ -113,7 +113,7 @@ export default function AdminTimesheet() {
     };
 
     const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05 } } };
-    const itemVariants = { hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } };
+    const itemVariants = { hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } } as const;
 
     return (
         <div className="w-full relative min-h-screen pb-10">
@@ -189,8 +189,8 @@ export default function AdminTimesheet() {
                                     </div>
                                 ) : (
                                     <label className={`w-full aspect-[4/3] border-2 border-dashed rounded-[1.5rem] flex flex-col items-center justify-center transition-all cursor-pointer relative overflow-hidden ${uploadingWeek === ts.week_num
-                                            ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500'
-                                            : 'border-gray-200 dark:border-gray-800 text-gray-400 hover:text-emerald-500 hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-emerald-500/5'
+                                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500'
+                                        : 'border-gray-200 dark:border-gray-800 text-gray-400 hover:text-emerald-500 hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-emerald-500/5'
                                         }`}>
                                         {uploadingWeek === ts.week_num ? (
                                             <div className="flex flex-col items-center">

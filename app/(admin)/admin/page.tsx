@@ -95,10 +95,14 @@ export default function AdminDashboard() {
     const itemVariants = {
         hidden: { opacity: 0, y: 15, scale: 0.98 },
         visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
-    };
+    } as const;
 
     // คำนวณ % ความคืบหน้าของชั่วโมงรวม
     const progressPercent = Math.min(Math.round((stats.totalHours / TARGET_HOURS) * 100), 100);
+
+    function handleAddReport(): void {
+        throw new Error("Function not implemented.");
+    }
 
     return (
         <div className="w-full relative min-h-screen pb-20">
