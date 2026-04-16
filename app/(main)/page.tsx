@@ -108,21 +108,7 @@ export default function Homes() {
     y.set(0);
   };
 
-  // ==========================================
-  // --- ระบบคำนวณ Progress Bar (ไม่ใช้ State) ---
-  // ==========================================
-  const startDate = new Date(2026, 2, 9); // 9 มีนาคม 2026
-  const today = new Date();
-  const diffTime = today.getTime() - startDate.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-  let currentWeek = Math.floor(diffDays / 7) + 1;
-  // ป้องกันไม่ให้เกินขอบเขต 1-8 สัปดาห์
-  if (currentWeek < 1) currentWeek = 1;
-  if (currentWeek > 8) currentWeek = 8;
-
-  const progressPercent = (currentWeek / 8) * 100;
-  // ==========================================
 
   return (
     <main
@@ -176,37 +162,7 @@ export default function Homes() {
               <span className="text-base sm:text-lg font-extrabold text-black dark:text-white transition-colors duration-300">Digital Innovation Solutions</span>
             </p>
 
-            {/* --- Progress Bar Component --- */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="w-full max-w-[380px] mb-12 bg-white/60 dark:bg-[#111113]/60 backdrop-blur-xl border border-black/5 dark:border-white/10 p-5 rounded-3xl shadow-sm text-left"
-            >
-              <div className="flex justify-between items-end mb-3">
-                <div className="flex items-center gap-2">
-                  <Target size={18} className="text-[#e62e2e]" />
-                  <span className="text-sm font-bold text-gray-800 dark:text-gray-200">
-                    ความคืบหน้าการฝึกงาน
-                  </span>
-                </div>
-                <span className="text-xs font-black text-black dark:text-white bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-full">
-                  สัปดาห์ที่ {currentWeek}/8
-                </span>
-              </div>
 
-              <div className="w-full h-2.5 bg-gray-200 dark:bg-zinc-800 rounded-full overflow-hidden shadow-inner relative">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressPercent}%` }}
-                  transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
-                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-orange-400 to-[#e62e2e] rounded-full"
-                />
-              </div>
-              <p className="text-right mt-2 text-[11px] font-bold text-gray-500 dark:text-gray-400">
-                สำเร็จแล้ว {progressPercent}%
-              </p>
-            </motion.div>
 
             <motion.button
               onClick={() => router.push("/reports")}
