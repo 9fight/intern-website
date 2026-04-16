@@ -163,23 +163,12 @@ export default function PhotosPage() {
         const fetchGalleryData = async () => {
             setIsLoading(true);
             try {
-                // ดึงเฉพาะงานที่มีรูปภาพ และไม่ใช่วันหยุด
+                // ดึงเฉพาะงานที่มีรูปภาพ และ สเตตัส is_holiday ต้องเป็น false (ไม่ใช่วันหยุด)
                 const { data, error } = await supabase
                     .from('daily_tasks')
                     .select('week_num, image_url')
                     .not('image_url', 'is', null)
-
-                    // 👉 เพิ่มเงื่อนไขกรองวันหยุดตรงนี้ (เลือกใช้ตามโครงสร้าง DB ของคุณ)
-
-                    // แบบที่ 1: ถ้าใช้คอลัมน์ชื่อ title และมีคำว่า "วันหยุด"
-                    .not('title', 'ilike', '%วันหยุด%')
-
-                    // แบบที่ 2: ถ้ามีคอลัมน์สถานะ (status) เช่น 'holiday' หรือ 'วันหยุด'
-                    // .neq('status', 'วันหยุด') 
-
-                    // แบบที่ 3: ถ้ามีคอลัมน์ is_holiday เป็น boolean (true/false)
-                    // .eq('is_holiday', false)
-
+                    .eq('is_holiday', false) // 👉 เพิ่มเงื่อนไขกรองวันหยุดตรงนี้
                     .order('week_num', { ascending: true })
                     .order('day_id', { ascending: true });
 
