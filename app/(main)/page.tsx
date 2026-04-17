@@ -522,14 +522,14 @@ export default function Homes() {
               </h2>
 
               <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 text-center font-medium">
-                บอกว่าห้ามคลิกๆ ก็ยังจะกดเข้ามาดูอีกนะ <br /> แอบอยากรู้ล่ะสิว่ามีอะไร? 🤣
+                มึงมึนจังวะกูบอกว่าห้ามคลิกๆ <br /> แม่งโครตมึน? 🤣
               </p>
 
               <button
                 onClick={() => setShowTrollModal(false)}
                 className="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-4 rounded-full hover:scale-105 active:scale-95 transition-transform shadow-lg"
               >
-                โอเคๆ ยอมแพ้ละ ปิดก็ได้
+                ขอโทษครับพี่
               </button>
             </motion.div>
           </motion.div>
