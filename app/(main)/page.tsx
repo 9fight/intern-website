@@ -3,20 +3,20 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import {
   MapPin, ChevronRight, Briefcase, Zap, Smartphone,
   Download, Code2, GraduationCap, Mail, ChevronUp,
   Bell, QrCode, ArrowRightLeft, Wallet, Home, User, Clock, ShoppingBag, Coffee,
-  Sun, Moon, Target, AlertCircle // เพิ่ม AlertCircle เข้ามา
+  Sun, Moon, Target // เพิ่ม Icon Target เข้ามา
 } from "lucide-react";
 
+// import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Theme from "@/components/Theme";
 
 export default function Homes() {
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [showTrollModal, setShowTrollModal] = useState(false); // State สำหรับ Modal กวนๆ
   const router = useRouter();
 
   useEffect(() => {
@@ -32,6 +32,10 @@ export default function Homes() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   // --- Dark Mode Logic ---
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -41,6 +45,16 @@ export default function Homes() {
       setIsDarkMode(isDark);
     }
   }, []);
+
+  const toggleTheme = () => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove("dark");
+      setIsDarkMode(false);
+    } else {
+      document.documentElement.classList.add("dark");
+      setIsDarkMode(true);
+    }
+  };
 
   const teamImages = [
     "/image/person/pic1.jpg",
@@ -94,11 +108,14 @@ export default function Homes() {
     y.set(0);
   };
 
+
+
   return (
     <main
       style={{ fontFamily: "'Inter', 'Sarabun', sans-serif" }}
       className="min-h-screen font-sans bg-[#F5F5F7] text-[#1D1D1F] dark:bg-[#09090b] dark:text-gray-100 overflow-hidden relative selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-300"
     >
+      {/* <Navbar /> */}
 
       {/* --- 2. Hero Section --- */}
       <section className="relative w-full min-h-screen flex flex-col lg:flex-row items-center justify-center px-6 sm:px-10 lg:px-20 pt-24 pb-20 overflow-hidden">
@@ -144,6 +161,8 @@ export default function Homes() {
               Startup ด้าน Software Tech & AI <br />
               <span className="text-base sm:text-lg font-extrabold text-black dark:text-white transition-colors duration-300">Digital Innovation Solutions</span>
             </p>
+
+
 
             <motion.button
               onClick={() => router.push("/reports")}
@@ -238,7 +257,6 @@ export default function Homes() {
             </div>
           </motion.div>
 
-          {/* --- Profile Clickable Section --- */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -248,23 +266,11 @@ export default function Homes() {
             style={{ perspective: "1000px" }}
           >
             <motion.div
-              onClick={() => setShowTrollModal(true)} // กดที่รูปแล้วเปิด Modal
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
-              whileHover={{ scale: 1.02 }}
               style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-              className="w-56 h-56 sm:w-72 sm:h-72 lg:w-[380px] lg:h-[380px] rounded-full p-2 border border-[#3A3A4A] relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer group"
+              className="w-56 h-56 sm:w-72 sm:h-72 lg:w-[380px] lg:h-[380px] rounded-full p-2 border border-[#3A3A4A] relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer"
             >
-              {/* ป้ายเตือน ห้ามกด! */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-4 -right-2 sm:-top-6 sm:right-0 z-50 bg-[#e62e2e] text-white px-4 py-1.5 rounded-full flex items-center gap-2 shadow-lg border-2 border-white/20 group-hover:scale-110 transition-transform"
-              >
-                <AlertCircle size={16} className="animate-pulse" />
-                <span className="text-[10px] sm:text-xs font-black uppercase tracking-tighter">ห้ามคลิกเด็ดขาด!</span>
-              </motion.div>
-
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="absolute w-[90%] h-[90%] bg-purple-600/30 rounded-full blur-[60px]" />
                 <motion.div
@@ -274,8 +280,8 @@ export default function Homes() {
                 />
                 <div className="absolute w-[70%] h-[70%] bg-cyan-400/10 rounded-full blur-[80px] -translate-x-10 -translate-y-10" />
               </div>
-              <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-transparent group-hover:border-white/20 transition-colors" style={{ transform: "translateZ(50px)" }}>
-                <Image src={profile.image} alt={profile.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" priority />
+              <div className="relative w-full h-full rounded-full overflow-hidden" style={{ transform: "translateZ(50px)" }}>
+                <Image src={profile.image} alt={profile.name} fill className="object-cover" priority />
               </div>
               <motion.div
                 style={{ transform: "translateZ(51px)", opacity: useTransform(mouseYSpring, [-0.5, 0.5], [0.1, 0]) }}
@@ -375,6 +381,7 @@ export default function Homes() {
 
           {/* --- Phone Mockup --- */}
           <div className="w-full lg:w-1/2 relative flex justify-center items-center">
+            {/* Wrapper สำหรับสเกลมือถือลงเมื่อหน้าจอเล็กกว่า 380px */}
             <div className="scale-[0.85] sm:scale-100 origin-center flex justify-center w-full">
               <motion.div
                 initial={{ y: 50, opacity: 0 }}
@@ -495,48 +502,8 @@ export default function Homes() {
 
       <Theme />
 
-      {/* --- Troll Modal Section --- */}
-      <AnimatePresence>
-        {showTrollModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
-            onClick={() => setShowTrollModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.5, y: 100, rotate: -10 }}
-              animate={{ scale: 1, y: 0, rotate: 0 }}
-              exit={{ scale: 0.5, y: 100, opacity: 0 }}
-              transition={{ type: "spring", bounce: 0.5 }}
-              className="bg-white dark:bg-[#1D1D1F] w-full max-w-sm rounded-[2rem] p-8 shadow-2xl flex flex-col items-center justify-center border-4 border-black dark:border-white relative overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500"></div>
-
-              <div className="text-7xl mb-6 animate-bounce">🫣</div>
-
-              <h2 className="text-3xl sm:text-4xl font-black text-black dark:text-white mb-2 text-center tracking-tight leading-tight">
-                กูว่าแล้ว<br />มึงต้องอ่าน!
-              </h2>
-
-              <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 text-center font-medium">
-                มึงมึนจังวะกูบอกว่าห้ามคลิกๆ <br /> แม่งโครตมึน? 🤣
-              </p>
-
-              <button
-                onClick={() => setShowTrollModal(false)}
-                className="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-4 rounded-full hover:scale-105 active:scale-95 transition-transform shadow-lg"
-              >
-                ขอโทษครับพี่
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <Footer />
+      {/* --- 6. Footer --- */}
+      {/* <Footer /> */}
     </main>
   );
 }
