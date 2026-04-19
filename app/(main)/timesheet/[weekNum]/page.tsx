@@ -10,6 +10,22 @@ import {
     Sparkles, FileText
 } from "lucide-react";
 
+import { Variants } from "framer-motion"; // <--- 1. Import Variants
+
+// 2. กำหนด Type ให้ตัวแปร
+const Variants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            type: "spring", // <--- แบบนี้ไม่ต้องใส่ as const แล้ว
+            stiffness: 100,
+            damping: 10
+        }
+    }
+};
+
 // ==========================================
 // 1. Skeleton Loading สไตล์ Bento Box
 // ==========================================
@@ -219,8 +235,8 @@ export default function TimesheetDetailPage() {
                                         whileHover={{ scale: 1.02, y: -5 }}
                                         whileTap={{ scale: 0.98 }}
                                         className={`rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden border ${isCompleted
-                                                ? 'bg-emerald-50 dark:bg-[#111113] border-emerald-100 dark:border-emerald-500/20'
-                                                : 'bg-amber-50 dark:bg-[#111113] border-amber-100 dark:border-amber-500/20'
+                                            ? 'bg-emerald-50 dark:bg-[#111113] border-emerald-100 dark:border-emerald-500/20'
+                                            : 'bg-amber-50 dark:bg-[#111113] border-amber-100 dark:border-amber-500/20'
                                             }`}
                                     >
                                         <div className="absolute -right-6 -top-6 opacity-10 dark:opacity-5 transform rotate-12 transition-transform duration-500 group-hover:rotate-0">
