@@ -13,13 +13,13 @@ import {
 import { Variants } from "framer-motion"; // <--- 1. Import Variants
 
 // 2. กำหนด Type ให้ตัวแปร
-const itemVariants: Variants = {
+const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
         opacity: 1,
         y: 0,
         transition: {
-            type: "spring", // <--- แบบนี้ไม่ต้องใส่ as const แล้ว
+            type: "spring" as const, // <--- เติม as const ตรงนี้ครับ สำคัญมาก
             stiffness: 100,
             damping: 10
         }
