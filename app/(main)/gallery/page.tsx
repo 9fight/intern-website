@@ -94,9 +94,9 @@ const WeekAlbumCard = ({
                 {hasImages ? (
                     <>
                         <img
-                            src={coverImage}
+                            src={coverImage ?? undefined}
                             alt={`Week ${weekNum} Cover`}
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            className="absolute inset-0 w-full h-full object-cover transition..."
                         />
                         {/* Shimmer Light Effect */}
                         <motion.div
