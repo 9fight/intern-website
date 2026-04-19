@@ -13,7 +13,7 @@ import {
 import { Variants } from "framer-motion"; // <--- 1. Import Variants
 
 // 2. กำหนด Type ให้ตัวแปร
-const Variants: Variants = {
+const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
         opacity: 1,
