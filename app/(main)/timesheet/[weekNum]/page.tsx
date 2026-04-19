@@ -6,21 +6,26 @@ import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ArrowLeft, CalendarRange, CheckCircle2, Clock,
-    FileX, AlertCircle, Timer, FileSearch
+    FileX, AlertCircle, Timer, FileSearch,
+    Sparkles, FileText
 } from "lucide-react";
 
-// --- Skeleton Component (สำหรับ UX โหลดข้อมูล) ---
-const DetailSkeleton = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start w-full animate-pulse">
-        {/* Skeleton รูปภาพ */}
-        <div className="w-full aspect-[3/4] rounded-[2rem] bg-gray-200 dark:bg-white/5" />
+// ==========================================
+// 1. Skeleton Loading สไตล์ Bento Box
+// ==========================================
+const DetailBentoSkeleton = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full animate-pulse">
+        {/* ฝั่งซ้าย: กล่องรูปภาพ */}
+        <div className="col-span-1 lg:col-span-5 aspect-[3/4] lg:aspect-auto lg:h-[650px] bg-gray-200 dark:bg-gray-800 rounded-[2.5rem]" />
 
-        {/* Skeleton เนื้อหา */}
-        <div className="flex flex-col pt-4 md:pt-10 space-y-6">
-            <div className="w-32 h-8 bg-gray-200 dark:bg-white/5 rounded-full" />
-            <div className="w-48 md:w-64 h-12 md:h-16 bg-gray-200 dark:bg-white/5 rounded-2xl" />
-            <div className="w-full h-40 bg-gray-200 dark:bg-white/5 rounded-[2rem]" />
-            <div className="w-full h-24 bg-gray-200 dark:bg-white/5 rounded-2xl" />
+        {/* ฝั่งขวา: กล่องข้อมูลย่อย (Bento) */}
+        <div className="col-span-1 lg:col-span-7 flex flex-col gap-6">
+            <div className="h-[120px] bg-gray-200 dark:bg-gray-800 rounded-[2.5rem]" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="h-[220px] bg-gray-200 dark:bg-gray-800 rounded-[2.5rem]" />
+                <div className="h-[220px] bg-gray-200 dark:bg-gray-800 rounded-[2.5rem]" />
+            </div>
+            <div className="h-[140px] flex-1 bg-gray-200 dark:bg-gray-800 rounded-[2.5rem]" />
         </div>
     </div>
 );
@@ -42,7 +47,7 @@ export default function TimesheetDetailPage() {
                     .from('weekly_reports')
                     .select('week_num, date_range, status, timesheet_image, total_hours')
                     .eq('week_num', currentWeekNum)
-                    .single(); // ใช้ single() เพราะเลขสัปดาห์ไม่ซ้ำกัน
+                    .single();
 
                 if (data && !error) setWeekData(data);
             } catch (err) {
@@ -66,50 +71,67 @@ export default function TimesheetDetailPage() {
 
     const itemVariants = {
         hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-    } as const;
+        visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    };
 
     return (
-        <main className="min-h-screen font-sans bg-[#F5F5F7] text-[#1D1D1F] dark:bg-[#09090b] dark:text-gray-100 transition-colors duration-300 pb-20 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+        <main className="min-h-screen font-sans bg-[#F5F5F7] text-[#1D1D1F] dark:bg-[#09090b] dark:text-gray-100 transition-colors duration-300 pb-24 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
 
-            {/* --- Header / Back Button --- */}
-            <nav className="sticky top-0 z-50 bg-white/70 dark:bg-black/70 backdrop-blur-xl border-b border-black/5 dark:border-white/5 py-4 px-4 md:px-12 lg:px-20 transition-colors duration-300">
-                <motion.button
-                    whileHover="hover"
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => router.back()}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 rounded-full text-sm font-bold transition-colors duration-300 group"
-                >
-                    <motion.div variants={{ hover: { x: -3 } }} transition={{ duration: 0.2 }}>
+            {/* ========================================== */}
+            {/* Minimal Header (เน้นความต่อเนื่องจากหน้าหลัก) */}
+            {/* ========================================== */}
+            <nav className="sticky top-0 z-50 bg-[#F5F5F7]/80 dark:bg-[#09090b]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5 py-4 px-4 md:px-8 lg:px-12 transition-colors duration-300">
+                <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+                    <motion.button
+                        whileHover={{ scale: 1.02, x: -3 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => router.back()}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-[#111113] hover:bg-gray-50 dark:hover:bg-white/5 border border-gray-200 dark:border-white/10 rounded-full text-sm font-bold transition-all shadow-sm"
+                    >
                         <ArrowLeft size={18} strokeWidth={2.5} />
-                    </motion.div>
-                    ย้อนกลับ
-                </motion.button>
+                        กลับหน้ารวม
+                    </motion.button>
+
+                    <div className="hidden sm:flex flex-col items-end">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Timesheet Details</span>
+                        <span className="text-sm font-bold">สัปดาห์ที่ {currentWeekNum}</span>
+                    </div>
+                </div>
             </nav>
 
-            <div className="max-w-6xl mx-auto px-4 md:px-8 mt-8 md:mt-12">
+            {/* ========================================== */}
+            {/* Main Content (Bento Grid Layout) */}
+            {/* ========================================== */}
+            <div className="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 mt-8 md:mt-12 relative z-20">
+
+                <div className="mb-8 md:mb-10">
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tight text-black dark:text-white">
+                        รายละเอียดสัปดาห์ที่ {currentWeekNum}
+                    </h1>
+                </div>
+
                 <AnimatePresence mode="wait">
                     {isLoading ? (
                         <motion.div key="skeleton" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                            <DetailSkeleton />
+                            <DetailBentoSkeleton />
                         </motion.div>
                     ) : !weekData ? (
                         <motion.div
                             key="not-found"
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="min-h-[60vh] flex flex-col items-center justify-center text-center"
+                            className="min-h-[40vh] flex flex-col items-center justify-center text-center bg-white dark:bg-[#111113] rounded-[3rem] border border-gray-200 dark:border-white/5 py-20 shadow-sm"
                         >
-                            <div className="w-24 h-24 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-6">
+                            <div className="w-24 h-24 bg-gray-50 dark:bg-[#1a1a1c] rounded-full flex items-center justify-center mb-6">
                                 <FileSearch size={40} className="text-gray-400" strokeWidth={1.5} />
                             </div>
-                            <h1 className="text-2xl md:text-3xl font-black mb-2 text-gray-900 dark:text-white tracking-tight">ไม่พบข้อมูลสัปดาห์นี้</h1>
-                            <p className="text-gray-500 font-medium mb-8">อาจยังไม่มีการบันทึกข้อมูลสำหรับสัปดาห์ที่ {currentWeekNum}</p>
+                            <h2 className="text-2xl md:text-3xl font-black mb-2 tracking-tight">ไม่พบข้อมูลสัปดาห์นี้</h2>
+                            <p className="text-gray-500 font-medium mb-8">อาจยังไม่มีการบันทึกเอกสารสำหรับสัปดาห์ที่ {currentWeekNum}</p>
                             <button
                                 onClick={() => router.push('/timesheet')}
-                                className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold hover:scale-105 transition-transform"
+                                className="px-8 py-3.5 bg-black dark:bg-white text-white dark:text-black rounded-2xl font-bold hover:scale-105 transition-transform"
                             >
-                                กลับไปหน้าหลัก
+                                กลับไปหน้ารวม
                             </button>
                         </motion.div>
                     ) : (
@@ -118,95 +140,118 @@ export default function TimesheetDetailPage() {
                             variants={containerVariants}
                             initial="hidden"
                             animate="visible"
-                            className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start"
+                            className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch"
                         >
-                            {/* --- ฝั่งซ้าย: รูปภาพใบลงเวลา --- */}
-                            <motion.div variants={itemVariants} className="w-full">
-                                <div className="w-full aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl bg-gray-100 dark:bg-[#111113] border border-black/5 dark:border-white/5 relative group flex items-center justify-center">
+                            {/* --- BENTO 1: รูปภาพเอกสาร (ฝั่งซ้าย) --- */}
+                            <motion.div variants={itemVariants} className="col-span-1 lg:col-span-5 h-full">
+                                <div className="w-full h-full min-h-[500px] lg:min-h-[650px] rounded-[2.5rem] overflow-hidden shadow-lg bg-white dark:bg-[#111113] border border-gray-100 dark:border-white/10 relative group flex items-center justify-center p-2">
                                     {weekData.timesheet_image ? (
-                                        <motion.img
-                                            initial={{ scale: 1.05 }}
-                                            animate={{ scale: 1 }}
-                                            transition={{ duration: 0.8 }}
-                                            src={weekData.timesheet_image}
-                                            alt={`Timesheet Week ${weekData.week_num}`}
-                                            className="w-full h-full object-cover"
-                                        />
+                                        <div className="w-full h-full relative rounded-[2rem] overflow-hidden bg-gray-50 dark:bg-[#1a1a1c]">
+                                            <img
+                                                src={weekData.timesheet_image}
+                                                alt={`Timesheet Week ${weekData.week_num}`}
+                                                className="absolute inset-0 w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
+                                            />
+                                        </div>
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center text-gray-400 dark:text-gray-600">
-                                            <FileX size={64} strokeWidth={1.5} className="mb-4 opacity-50" />
-                                            <span className="text-lg font-black uppercase tracking-widest opacity-50">ไม่มีเอกสารแนบ</span>
+                                        <div className="flex flex-col items-center justify-center text-gray-400 bg-gray-50 dark:bg-[#1a1a1c] w-full h-full rounded-[2rem]">
+                                            <FileX size={64} strokeWidth={1} className="mb-4 opacity-50" />
+                                            <span className="text-sm font-black uppercase tracking-widest opacity-50">ไม่มีภาพเอกสารแนบ</span>
                                         </div>
                                     )}
 
-                                    {/* Overlay ลายน้ำเล็กๆ ป้องกันความโล่ง */}
-                                    <div className="absolute top-6 right-6 bg-white/80 dark:bg-black/60 backdrop-blur-md px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-black dark:text-white shadow-sm pointer-events-none">
-                                        Week {weekData.week_num}
+                                    {/* Glass Badge */}
+                                    <div className="absolute top-6 left-6 bg-white/60 dark:bg-black/60 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-black dark:text-white border border-black/5 dark:border-white/10 shadow-sm z-30">
+                                        <div className="flex items-center gap-1.5">
+                                            <FileText size={14} />
+                                            Document View
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
 
-                            {/* --- ฝั่งขวา: รายละเอียด --- */}
-                            <motion.div variants={itemVariants} className="flex flex-col lg:pt-8">
+                            {/* --- ฝั่งขวา: Grid ข้อมูลย่อย --- */}
+                            <motion.div variants={itemVariants} className="col-span-1 lg:col-span-7 flex flex-col gap-6">
 
-                                {/* Badge สถานะ (ด้านบนชื่อ) */}
-                                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full w-fit mb-6 text-[11px] font-black tracking-widest uppercase ${isCompleted
-                                    ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
-                                    : 'bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20'
-                                    }`}>
-                                    {isCompleted ? <CheckCircle2 size={16} strokeWidth={2.5} /> : <AlertCircle size={16} strokeWidth={2.5} />}
-                                    {isCompleted ? 'Verified' : 'Pending Verification'}
-                                </div>
-
-                                <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-8 text-gray-900 dark:text-white">
-                                    สัปดาห์ที่ {weekData.week_num}
-                                </h1>
-
-                                {/* กล่องข้อมูล (Bento Box) */}
-                                <div className="bg-white dark:bg-[#111113] rounded-[2rem] p-6 md:p-8 shadow-sm border border-gray-100 dark:border-white/5 flex flex-col gap-6 mb-8">
-                                    {/* รอบการประเมิน */}
+                                {/* BENTO 2: วันที่ (Date Range) */}
+                                <motion.div
+                                    whileHover={{ scale: 1.01 }}
+                                    className="bg-white dark:bg-[#111113] rounded-[2.5rem] p-8 shadow-sm border border-gray-100 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between group gap-4"
+                                >
                                     <div>
-                                        <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                            <CalendarRange size={16} /> รอบการประเมิน
+                                        <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                            <CalendarRange size={16} /> Date Range
                                         </h3>
-                                        <p className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                                        <p className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
                                             {weekData.date_range || 'ยังไม่ระบุวันที่'}
                                         </p>
                                     </div>
-
-                                    <div className="h-[1px] w-full bg-gray-100 dark:bg-white/5" />
-
-                                    {/* สถานะการลงเวลา & ชั่วโมงรวม */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                                <Clock size={16} /> สถานะ
-                                            </h3>
-                                            <p className={`text-lg md:text-xl font-black ${isCompleted ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
-                                                }`}>
-                                                {weekData.status || 'รออัปเดต'}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                                                <Timer size={16} /> ชั่วโมงรวม
-                                            </h3>
-                                            <p className="text-lg md:text-xl font-black text-blue-600 dark:text-blue-400">
-                                                {weekData.total_hours || 0} <span className="text-sm font-bold text-gray-500">ชม.</span>
-                                            </p>
-                                        </div>
+                                    <div className="w-14 h-14 rounded-full bg-gray-50 dark:bg-[#1a1a1c] border border-gray-100 dark:border-white/5 flex items-center justify-center group-hover:rotate-12 transition-transform duration-500 shrink-0">
+                                        <Sparkles size={24} className="text-gray-300 dark:text-gray-600" />
                                     </div>
+                                </motion.div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    {/* BENTO 3: ชั่วโมงการทำงาน (ดำดุดัน) */}
+                                    <motion.div
+                                        whileHover={{ scale: 1.02, y: -5 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className="bg-black dark:bg-white rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden group border border-black dark:border-white"
+                                    >
+                                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] dark:bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.05)_0%,transparent_70%)] transition-opacity duration-500 pointer-events-none" />
+
+                                        <div className="w-12 h-12 rounded-2xl bg-white/10 dark:bg-black/5 backdrop-blur-md flex items-center justify-center border border-white/10 dark:border-black/10 mb-8">
+                                            <Timer size={24} className="text-white dark:text-black" />
+                                        </div>
+                                        <p className="text-gray-400 dark:text-gray-500 text-sm font-bold mb-2 uppercase tracking-widest">
+                                            Total Hours
+                                        </p>
+                                        <div className="flex items-baseline gap-2 relative z-10">
+                                            <span className="text-6xl sm:text-7xl font-black text-white dark:text-black tracking-tighter leading-none">
+                                                {weekData.total_hours || 0}
+                                            </span>
+                                            <span className="text-xl font-bold text-white/50 dark:text-black/50">ชม.</span>
+                                        </div>
+                                    </motion.div>
+
+                                    {/* BENTO 4: สถานะ (สีตามเงื่อนไข) */}
+                                    <motion.div
+                                        whileHover={{ scale: 1.02, y: -5 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className={`rounded-[2.5rem] p-8 shadow-sm relative overflow-hidden border ${isCompleted
+                                                ? 'bg-emerald-50 dark:bg-[#111113] border-emerald-100 dark:border-emerald-500/20'
+                                                : 'bg-amber-50 dark:bg-[#111113] border-amber-100 dark:border-amber-500/20'
+                                            }`}
+                                    >
+                                        <div className="absolute -right-6 -top-6 opacity-10 dark:opacity-5 transform rotate-12 transition-transform duration-500 group-hover:rotate-0">
+                                            {isCompleted ? <CheckCircle2 size={160} /> : <AlertCircle size={160} />}
+                                        </div>
+
+                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-8 shadow-inner relative z-10 ${isCompleted ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'
+                                            }`}>
+                                            <Clock size={24} strokeWidth={2.5} />
+                                        </div>
+                                        <p className="text-gray-500 dark:text-gray-400 text-sm font-bold mb-2 uppercase tracking-widest relative z-10">
+                                            Status
+                                        </p>
+                                        <p className={`text-2xl sm:text-3xl font-black tracking-tight relative z-10 ${isCompleted ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
+                                            }`}>
+                                            {weekData.status || 'รออัปเดต'}
+                                        </p>
+                                    </motion.div>
                                 </div>
 
-                                {/* พื้นที่ข้อความเพิ่มเติม */}
-                                <div className="bg-gray-50 dark:bg-white/[0.02] rounded-[2rem] p-6 md:p-8 border border-gray-100 dark:border-white/5">
+                                {/* BENTO 5: กล่องข้อความสรุป */}
+                                <motion.div
+                                    className="bg-white dark:bg-[#111113] rounded-[2.5rem] p-8 border border-gray-100 dark:border-white/10 flex-1 flex flex-col justify-center shadow-sm"
+                                >
                                     <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed text-sm md:text-base">
-                                        เอกสารฉบับนี้เป็นการสรุปข้อมูลการปฏิบัติงานและการลงเวลาในสัปดาห์ที่ <span className="font-bold text-gray-900 dark:text-white">{weekData.week_num}</span>
+                                        เอกสารฉบับนี้สรุปข้อมูลการลงเวลาใน<span className="text-black dark:text-white font-black mx-1">สัปดาห์ที่ {weekData.week_num}</span>
                                         {isCompleted
-                                            ? " ซึ่งได้รับการตรวจสอบและลงนามรับรองอย่างครบถ้วนแล้ว"
-                                            : " ขณะนี้กำลังรอการตรวจสอบความเรียบร้อย หรือการแนบเอกสารยืนยันจากผู้ที่เกี่ยวข้อง"}
+                                            ? "ได้รับการตรวจสอบและรับรองอย่างครบถ้วนเรียบร้อยแล้ว"
+                                            : "ขณะนี้กำลังรอการตรวจสอบความเรียบร้อย โปรดติดตามสถานะอีกครั้ง"}
                                     </p>
-                                </div>
+                                </motion.div>
 
                             </motion.div>
                         </motion.div>
