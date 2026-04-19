@@ -3,28 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
     ArrowLeft, CalendarRange, CheckCircle2, Clock,
     FileX, AlertCircle, Timer, FileSearch,
     Sparkles, FileText
 } from "lucide-react";
-
-import { Variants } from "framer-motion"; // <--- 1. Import Variants
-
-// 2. กำหนด Type ให้ตัวแปร
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            type: "spring" as const, // <--- เติม as const ตรงนี้ครับ สำคัญมาก
-            stiffness: 100,
-            damping: 10
-        }
-    }
-};
 
 // ==========================================
 // 1. Skeleton Loading สไตล์ Bento Box
@@ -80,12 +64,13 @@ export default function TimesheetDetailPage() {
     const isCompleted = weekData?.status?.includes('เรียบร้อย') || weekData?.status?.includes('ครบถ้วน');
 
     // --- Framer Motion Variants ---
-    const containerVariants = {
+    // ใส่ Type : Variants ตรงนี้ และไม่ต้องมี as const แล้ว
+    const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
     };
 
-    const itemVariants = {
+    const itemVariants: Variants = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
     };
